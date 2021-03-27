@@ -8,7 +8,7 @@ git clone git@github.com:fl0cker/desafio-u.git
 # Altere os arquivos abaixo
 
 	inventory/hosts
-		altere o local onde está a chave na sua maquina (ansible_ssh_private_key_file)
+		altere o caminho onde está a chave SSH (ansible_ssh_private_key_file)
 
 # Execute o playbook
 ```shell

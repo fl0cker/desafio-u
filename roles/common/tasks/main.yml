@@ -1,29 +1,6 @@
 ---
-- name: Disable Password Authentication
-  lineinfile:
-    dest: /etc/ssh/sshd_config
-    regexp: '^PasswordAuthentication'
-    line: "PasswordAuthentication no"
-    state: present
-    backup: yes
+- name: Change SSH parameters
+  include_tasks: sshd.yml
 
-- name: Change Port Default
-  lineinfile:
-    dest: /etc/ssh/sshd_config
-    regexp: '^Port'
-    line: "Port 22"
-    state: present
-    backup: yes
-
-- name: Disable Root Login
-  lineinfile:
-    dest: /etc/ssh/sshd_config
-    regexp: '^PermitRootLogin'
-    line: "PermitRootLogin no"
-    state: present
-    backup: yes
-  notify:
-    - "restart ssh"
-
-- name: Create user HTTP
+- name: Create HTTPD user
   include_tasks: users.yml
