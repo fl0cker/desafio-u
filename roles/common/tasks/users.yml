@@ -1,0 +1,12 @@
+---
+- name: "Create HTTP user account"
+  user:
+    name: "{{ item }}"
+    groups:
+      - www-data
+    create_home: no
+    comment: "HTTPD user"
+    home: /var/www
+    shell: /usr/sbin/nologin
+    system: yes
+  with_items: "{{ users }}"
