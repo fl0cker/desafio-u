@@ -1,0 +1,46 @@
+---
+- name: "Install Certbot"
+  apt: name={{ certbot_packages }} update_cache=yes state=present
+
+- name: "Check if certificate already exists"
+  stat:
+    path: "{{ path_cert }}/{{ http_domain }}/cert.pem"
+  register: letsencrypt_cert
+  with_items: "{{ apache_vhosts }}"
+
+- name: "Stop services to allow certbot to generate a cert."
+  service:
+    name: "{{ item }}"
+    state: stopped
+  with_items:
+          -  "{{ certbot_create_standalone_stop_services }}"
+
+- name: "Generate new certificate if one doesn't exist."
+  shell: "certbot certonly --apache --noninteractive --expand --agree-tos --email {{ certbot_email_address }} -d {{ http_domain }} --cert-path {{ path_cert }}/{{ http_domain }}"
+  with_items: "{{ letsencrypt_cert.results }}"
+  when: item.stat.exists == False
+
+- name: "Enable ssl module"
+  shell: /usr/sbin/a2enmod ssl
+  notify:
+    - "reload apache2"
+
+- name: "Setup VirtualHost SSL"
+  template:
+    src: "templates/site-ssl.conf.j2"
+    dest: "/etc/apache2/sites-available/{{ http_conf }}"
+  notify:
+    - "reload apache2"
+
+- name: "Start services after cert has been generated."
+  service:
+    name: "{{ item }}"
+    state: started
+  with_items: "{{ certbot_create_standalone_stop_services }}"
+
+- name: "Add cron to auto renew"
+  ansible.builtin.cron:
+    name: "certbot renew"
+    minute: "0"
+    hour: "1"
+    job: "certbot renew"

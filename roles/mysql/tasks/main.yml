@@ -1,0 +1,59 @@
+---
+- name: "Install MySQL packages"
+  apt: name={{ mysql_packages }} state=present update_cache=yes
+
+- name: "Copy .my.cnf file"
+  template:
+    src: "root-my.cnf.j2"
+    dest: "{{ mysql_root_home }}/.my.cnf"
+    owner: root
+    group: root
+    mode: 0600
+
+- name: "Change root password"
+  mysql_user:
+    name: root
+    password: "{{ mysql_root_password }}"
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    state: present
+  no_log: true
+
+- name: "Remove anonymous access"
+  mysql_user:
+    name: ''
+    host_all: yes
+    state: absent
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+  no_log: true
+
+- name: "Remove test database"
+  mysql_db:
+    name: test
+    state: absent
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+  no_log: true
+
+- name: "Create database wordpress"
+  mysql_db:
+    name: "{{ mysql_db }}"
+    state: present
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+  no_log: true
+
+- name: "Create user wordpress"
+  mysql_user:
+    name: "{{ mysql_user }}"
+    password: "{{ mysql_password }}"
+    priv: "{{ mysql_db }}.*:ALL,GRANT"
+    state: present
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+  no_log: true
+
+- name: "Remove my.cnf"
+  ansible.builtin.file:
+    path: "{{ mysql_root_home }}/.my.cnf"
+    state: absent

@@ -1,3 +1,49 @@
 ---
-- name: Install Apache2
-  apt: name=apache2 update_cache=yes state=present
+- name: "Install Apache2"
+  apt: name={{ apache_packages }} update_cache=yes state=present
+
+- name: "Create HTTPD user"
+  include_tasks: users.yml
+
+- name: "Change Security Options"
+  include_tasks: security.yml
+
+- name: "Change HTTPD user"
+  lineinfile:
+    dest: "/etc/apache2/envvars"
+    regexp: "^export APACHE_RUN_USER="
+    line: "export APACHE_RUN_USER={{ apache_run_user }}"
+    state: present
+    backup: yes
+  notify:
+    - "restart apache2"
+
+- name: "Create wordpress folder"
+  file:
+    path: "/var/www/{{ http_domain }}"
+    state: directory
+    owner: "{{ apache_run_user }}"
+    group: "www-data"
+    mode: '0755'
+
+- name: "Setup VirtualHost"
+  template:
+    src: "templates/site.conf.j2"
+    dest: "/etc/apache2/sites-available/{{ http_conf }}"
+  notify: 
+    - "reload apache2"
+
+- name: "Enable rewrite module"
+  shell: /usr/sbin/a2enmod rewrite
+  notify: 
+    - "reload apache2"
+
+- name: "Enable site"
+  shell: /usr/sbin/a2ensite {{ http_conf }}
+  notify: 
+    - "reload apache2"
+
+- name: "Disable default site"
+  shell: /usr/sbin/a2dissite 000-default.conf
+  notify:
+    - "restart apache2"

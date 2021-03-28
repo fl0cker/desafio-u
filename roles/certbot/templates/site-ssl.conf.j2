@@ -1,0 +1,57 @@
+<VirtualHost *:{{ http_port }}>
+    ServerName catchall
+    <Location />
+        Order allow,deny
+        Deny from all
+    </Location>
+</VirtualHost>
+
+<VirtualHost *:{{ http_port }}>
+    ServerAdmin webmaster@{{ http_domain }}
+    ServerName {{ http_domain }}
+    ServerAlias www.{{ http_domain }}
+    DocumentRoot /var/www/{{ http_domain }}/wordpress
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+    <Directory /var/www/{{ http_domain }}>
+          Options -Indexes
+          AllowOverride All
+    </Directory>
+
+    <IfModule mod_dir.c>
+        DirectoryIndex index.php index.html index.cgi index.pl  index.xhtml index.htm
+    </IfModule>
+
+    RewriteEngine on
+    RewriteCond %{SERVER_NAME} =www.{{ http_domain }} [OR]
+    RewriteCond %{SERVER_NAME} ={{ http_domain }}
+    RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
+
+</VirtualHost>
+
+<VirtualHost *:{{ https_port }}>
+    ServerAdmin webmaster@{{ http_domain }}
+    ServerName {{ http_domain }}
+    ServerAlias www.{{ http_domain }}
+    DocumentRoot /var/www/{{ http_domain }}/wordpress
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+    <Directory /var/www/{{ http_domain }}>
+          Options -Indexes
+          AllowOverride All
+    </Directory>
+
+    <IfModule mod_dir.c>
+        DirectoryIndex index.php index.html index.cgi index.pl  index.xhtml index.htm
+    </IfModule>
+
+    SSLEngine on
+    SSLProtocol all -SSLv2
+    SSLCipherSuite HIGH:MEDIUM:!aNULL:!MD5
+    SSLCertificateFile {{ path_cert }}/{{ http_domain }}/fullchain.pem
+    SSLCertificateKeyFile {{ path_cert }}/{{ http_domain }}/privkey.pem
+    Include /etc/letsencrypt/options-ssl-apache.conf
+
+</VirtualHost>

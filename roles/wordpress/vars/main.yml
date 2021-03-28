@@ -1,0 +1,5 @@
+---
+#http_domain: "luizagostinho.tk"
+http_conf: "site.conf"
+http_port: "80"
+https_port: "443"

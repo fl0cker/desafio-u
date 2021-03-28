@@ -1,0 +1,18 @@
+---
+- name: "Allow SSH on port 2233"
+  ufw:
+    rule: allow
+    port: '2233'
+    proto: tcp
+
+- name: "Allow HTTP on port 80"
+  ufw:
+    rule: allow
+    port: '80'
+    proto: tcp
+
+- name: "Allow HTTPS on port 443"
+  ufw:
+    rule: allow
+    port: '443'
+    proto: tcp

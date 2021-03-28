@@ -6,20 +6,24 @@
     line: "PasswordAuthentication no"
     state: present
     backup: yes
-
-- name: "Change Port Default"
-  lineinfile:
-    dest: /etc/ssh/sshd_config
-    regexp: '^Port'
-    line: "Port 22"
-    state: present
-    backup: yes
+  notify:
+    - "restart ssh"
 
 - name: "Disable Root Login"
   lineinfile:
     dest: /etc/ssh/sshd_config
     regexp: '^PermitRootLogin'
     line: "PermitRootLogin no"
+    state: present
+    backup: yes
+  notify:
+    - "restart ssh"
+
+- name: "Change Port Default"
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: '^Port'
+    line: "Port 2233"
     state: present
     backup: yes
   notify:

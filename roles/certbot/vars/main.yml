@@ -1,0 +1,11 @@
+---
+certbot_packages:
+  - certbot
+  - python3-certbot-apache
+
+path_cert: "/etc/letsencrypt/live"
+certbot_email_address: "lasn_al@yahoo.com.br"
+certbot_create_standalone_stop_services:
+  - apache2
+apache_vhosts:
+    - {servername: "{{ http_domain }}", documentroot: "/var/www/{{ http_domain }}"}

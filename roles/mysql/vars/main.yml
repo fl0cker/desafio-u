@@ -1,0 +1,13 @@
+---
+#MySQL Settings
+mysql_root_username: "root"
+mysql_root_password: "neryamvok9"
+mysql_db: "wordpress"
+mysql_user: "wordpress"
+mysql_password: "feiccobVi"
+
+mysql_packages:
+  - python3-pymysql
+  - mysql-server
+
+mysql_root_home: "/root"

@@ -1,0 +1,20 @@
+---
+- name: "Change ServerTokens"
+  lineinfile:
+    dest: "/etc/apache2/conf-enabled/security.conf"
+    regexp: "^ServerTokens"
+    line: "ServerTokens Prod"
+    state: present
+    backup: yes
+  notify:
+    - "restart apache2"
+
+- name: "Change ServerSignature"
+  lineinfile:
+    dest: "/etc/apache2/conf-enabled/security.conf"
+    regexp: "^ServerSignature"
+    line: "ServerSignature Off"
+    state: present
+    backup: yes
+  notify:
+    - "restart apache2"

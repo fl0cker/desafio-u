@@ -1,0 +1,12 @@
+---
+- name: "Apply rules"
+  include_tasks: rules.yml
+
+- name: "Deny all and enable UFW"
+  ufw:
+    state: enabled
+    policy: deny
+
+- name: "Set logging"
+  ufw:
+    logging: 'on'

@@ -1,6 +1,3 @@
 ---
-- name: Change SSH parameters
+- name: "Change SSH parameters"
   include_tasks: sshd.yml
-
-- name: Create HTTPD user
-  include_tasks: users.yml

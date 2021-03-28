@@ -9,4 +9,4 @@
     home: /var/www
     shell: /usr/sbin/nologin
     system: yes
-  with_items: "{{ users }}"
+  with_items: "{{ apache_run_user }}"

@@ -6,3 +6,8 @@
   roles:
     - common
     - apache2
+    - mysql
+    - php
+    - wordpress
+    - certbot
+    - ufw

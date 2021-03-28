@@ -1,5 +1,6 @@
 [wordpressServer]
-ec2-3-236-229-160.compute-1.amazonaws.com
+luizagostinho.tk:2233
+#luizagostinho.cf:2233
 
 [all:vars]
 ansible_ssh_user=ubuntu
